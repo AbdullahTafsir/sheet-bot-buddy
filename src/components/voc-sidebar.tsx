@@ -115,8 +115,7 @@ export function Sidebar() {
         <Button
           onClick={() => create.mutate()}
           disabled={create.isPending}
-          variant="outline"
-          className="w-full justify-start gap-2 bg-background hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
+          className="w-full justify-start gap-2 bg-primary hover:bg-primary/90 text-primary-foreground border-0"
         >
           <Plus className="size-4" /> New chat
         </Button>
