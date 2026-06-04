@@ -99,20 +99,20 @@ function ChatPage() {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <header className="border-b border-border px-6 py-3 flex items-center gap-3">
-        <img src={logo} alt="VOC" width={28} height={28} />
+      <header className="border-b border-border px-6 py-3 flex items-center gap-3 bg-background/80 backdrop-blur">
+        <img src={logo} alt="VOC" width={26} height={26} className="rounded" />
         <div>
-          <h1 className="text-sm font-semibold text-foreground">VOC Intelligence Bot</h1>
-          <p className="text-[11px] text-muted-foreground">Ask anything about your customer feedback data</p>
+          <h1 className="text-sm font-semibold text-foreground" style={{ fontFamily: "'Georgia', serif" }}>VOC Intelligence</h1>
+          <p className="text-[11px] text-muted-foreground">Ask anything about your customer feedback</p>
         </div>
       </header>
 
       <Conversation className="flex-1">
         <ConversationContent className="max-w-3xl mx-auto w-full px-4">
           {messages.length === 0 && !initialQ.isLoading && (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <img src={logo} alt="" width={72} height={72} className="mb-4 opacity-90" />
-              <h2 className="text-xl font-semibold text-foreground">How can I help with your VOC data?</h2>
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <img src={logo} alt="" width={56} height={56} className="mb-5 opacity-90 rounded-xl" />
+              <h2 className="text-3xl text-foreground" style={{ fontFamily: "'Georgia', serif" }}>How can I help today?</h2>
               <p className="text-sm text-muted-foreground mt-1 mb-6">
                 I read directly from your connected Google Sheet.
               </p>
