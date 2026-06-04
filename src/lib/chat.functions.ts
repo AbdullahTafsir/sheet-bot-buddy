@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import type { UIMessage } from "ai";
+
 
 export const listThreads = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -61,9 +61,9 @@ export const getThreadMessages = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return (rows ?? []).map((r) => ({
       id: r.id,
-      role: r.role as UIMessage["role"],
-      parts: r.parts as UIMessage["parts"],
-    })) as UIMessage[];
+      role: r.role as "user" | "assistant" | "system",
+      parts: r.parts as unknown,
+    }));
   });
 
 export const getSettings = createServerFn({ method: "GET" })
