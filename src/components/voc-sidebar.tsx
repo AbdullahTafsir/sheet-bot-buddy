@@ -74,9 +74,9 @@ export function Sidebar() {
   return (
     <aside className="w-72 shrink-0 h-full flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
       <div className="px-5 pt-5 pb-4 flex items-center gap-3">
-        <img src={logo} alt="" width={36} height={36} />
+        <img src={logo} alt="" width={32} height={32} className="rounded" />
         <div>
-          <div className="text-sm font-bold text-white">VOC Bot</div>
+          <div className="text-sm font-semibold text-sidebar-foreground" style={{ fontFamily: "'Georgia', serif" }}>VOC Bot</div>
           <div className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">Intelligence</div>
         </div>
       </div>
@@ -84,7 +84,7 @@ export function Sidebar() {
       {settingsQ.data?.isAdmin && (
         <div className="px-4 pb-4">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/60 mb-2">
-            Data Source <span className="text-accent">(Admin)</span>
+            Data Source <span className="text-primary">(Admin)</span>
           </div>
           <div className="space-y-2">
             <div className="relative">
@@ -93,18 +93,18 @@ export function Sidebar() {
                 placeholder="Google Sheet CSV URL"
                 value={sheetUrl}
                 onChange={(e) => setSheetUrl(e.target.value)}
-                className="pl-8 h-9 bg-white/5 border-white/15 text-white text-xs placeholder:text-white/40 focus-visible:ring-accent"
+                className="pl-8 h-9 bg-background border-sidebar-border text-sidebar-foreground text-xs placeholder:text-sidebar-foreground/40 focus-visible:ring-primary"
               />
             </div>
             <Button
               size="sm"
               onClick={() => save.mutate(sheetUrl)}
               disabled={save.isPending}
-              className="w-full h-8 text-xs bg-accent hover:bg-accent/90 text-accent-foreground"
+              className="w-full h-8 text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {saved ? <><Check className="size-3.5" /> Saved</> : save.isPending ? "Saving…" : "Connect Sheet"}
             </Button>
-            <p className="text-[10px] text-sidebar-foreground/50 leading-relaxed">
+            <p className="text-[10px] text-sidebar-foreground/55 leading-relaxed">
               Shared with all users. In Sheets: File → Share → Publish to web → CSV.
             </p>
           </div>
@@ -115,7 +115,8 @@ export function Sidebar() {
         <Button
           onClick={() => create.mutate()}
           disabled={create.isPending}
-          className="w-full justify-start gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/10"
+          variant="outline"
+          className="w-full justify-start gap-2 bg-background hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
         >
           <Plus className="size-4" /> New chat
         </Button>
@@ -123,14 +124,14 @@ export function Sidebar() {
 
       <div className="flex-1 overflow-y-auto px-2 pb-2">
         <div className="text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/60 px-2 py-2">
-          Conversations
+          Recents
         </div>
         <ul className="space-y-0.5">
           {threadsQ.data?.map((t) => (
             <li key={t.id}>
               <div
-                className={`group flex items-center gap-2 px-2 py-2 rounded-md text-sm cursor-pointer transition-colors ${
-                  activeId === t.id ? "bg-white/15 text-white" : "text-sidebar-foreground/80 hover:bg-white/5"
+                className={`group flex items-center gap-2 px-2 py-1.5 rounded-md text-sm cursor-pointer transition-colors ${
+                  activeId === t.id ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-sidebar-foreground/85 hover:bg-sidebar-accent/60"
                 }`}
               >
                 <Link
@@ -138,7 +139,7 @@ export function Sidebar() {
                   params={{ threadId: t.id }}
                   className="flex items-center gap-2 flex-1 min-w-0"
                 >
-                  <MessageSquare className="size-3.5 shrink-0 opacity-70" />
+                  <MessageSquare className="size-3.5 shrink-0 opacity-60" />
                   <span className="truncate">{t.title}</span>
                 </Link>
                 <button
@@ -161,8 +162,8 @@ export function Sidebar() {
         </ul>
       </div>
 
-      <div className="p-3 border-t border-white/10">
-        <Button onClick={signOut} variant="ghost" className="w-full justify-start gap-2 text-sidebar-foreground/80 hover:bg-white/5 hover:text-white">
+      <div className="p-3 border-t border-sidebar-border">
+        <Button onClick={signOut} variant="ghost" className="w-full justify-start gap-2 text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground">
           <LogOut className="size-4" /> Sign out
         </Button>
       </div>
