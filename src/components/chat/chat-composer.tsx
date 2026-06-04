@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import type { ChatStatus } from "ai";
 import {
   PromptInput,
   PromptInputTextarea,
@@ -10,7 +11,7 @@ type Props = {
   value: string;
   onChange: (v: string) => void;
   onSubmit: (text: string) => void;
-  status: string;
+  status: ChatStatus;
   isBusy: boolean;
 };
 

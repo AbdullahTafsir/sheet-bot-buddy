@@ -1,10 +1,10 @@
-import type { UIMessage } from "ai";
+import type { UIMessage, ChatStatus } from "ai";
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 
 type Props = {
   messages: UIMessage[];
-  status: string;
+  status: ChatStatus;
 };
 
 export function ChatMessages({ messages, status }: Props) {
