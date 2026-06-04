@@ -74,7 +74,7 @@ Rules:
 - Be concise and insight-driven.
 
 === DATA (CSV) ===
-${sheetCsv || "(No sheet connected yet. Tell the user to paste a Google Sheet 'publish to web' CSV URL in the sidebar.)"}
+${sheetCsv || "(No sheet connected yet. The admin needs to paste a Google Sheet 'publish to web' CSV URL in the sidebar.)"}
 === END DATA ===`;
 
         // Persist the latest user message
