@@ -71,8 +71,7 @@ Response style (STRICT):
 - Be SHORT and punchy. Target 60–120 words unless the user explicitly asks for depth.
 - Lead with a 1-sentence headline insight in **bold**.
 - Then 2–4 tight bullets with concrete numbers (%, counts) — no fluff, no restating the question, no generic advice.
-- Use a compact **markdown table** whenever comparing categories, themes, sentiment, or rankings (max ~6 rows).
-- For distributions, render a quick inline bar chart using block chars, e.g. \`Pricing  ████████░░ 42%\`.
+- Use a compact **markdown table** whenever comparing categories, themes, sentiment, rankings, or distributions (max ~6 rows). Include a numeric column (%, count, or score). Do NOT draw ASCII/Unicode bar charts with block characters (▇ █ ░ ▓ etc.) — they render as ugly black boxes.
 - Include 1 short verbatim quote in *italics* only when it sharpens the point.
 - End with a single 👉 **Takeaway:** line (one sentence, actionable).
 - If the data can't answer the question, say so in one line. Don't speculate.
