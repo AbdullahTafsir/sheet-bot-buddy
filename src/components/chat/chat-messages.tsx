@@ -17,7 +17,7 @@ export function ChatMessages({ messages, status }: Props) {
             {m.role === "assistant" ? (
               <MessageResponse>{text}</MessageResponse>
             ) : (
-              <MessageContent>{text}</MessageContent>
+              <MessageContent className="group-[.is-user]:bg-primary/10 group-[.is-user]:text-foreground">{text}</MessageContent>
             )}
           </Message>
         );
