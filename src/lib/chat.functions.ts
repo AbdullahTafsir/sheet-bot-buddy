@@ -69,12 +69,14 @@ export const getThreadMessages = createServerFn({ method: "GET" })
 export const getSettings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase
-      .from("user_settings")
-      .select("sheet_csv_url")
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    return { sheet_csv_url: data?.sheet_csv_url ?? "" };
+    const [{ data: settings }, { data: roles }] = await Promise.all([
+      context.supabase.from("app_settings").select("sheet_csv_url").eq("id", true).maybeSingle(),
+      context.supabase.from("user_roles").select("role").eq("user_id", context.userId).eq("role", "admin"),
+    ]);
+    return {
+      sheet_csv_url: settings?.sheet_csv_url ?? "",
+      isAdmin: (roles?.length ?? 0) > 0,
+    };
   });
 
 export const updateSheetUrl = createServerFn({ method: "POST" })
@@ -84,8 +86,13 @@ export const updateSheetUrl = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     const { error } = await context.supabase
-      .from("user_settings")
-      .upsert({ user_id: context.userId, sheet_csv_url: data.url, updated_at: new Date().toISOString() });
+      .from("app_settings")
+      .update({
+        sheet_csv_url: data.url,
+        updated_at: new Date().toISOString(),
+        updated_by: context.userId,
+      })
+      .eq("id", true);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

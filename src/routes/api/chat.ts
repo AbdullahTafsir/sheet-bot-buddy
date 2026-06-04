@@ -57,11 +57,11 @@ export const Route = createFileRoute("/api/chat")({
           .maybeSingle();
         if (!thread) return new Response("Thread not found", { status: 404 });
 
-        // Fetch sheet URL
+        // Fetch shared sheet URL (admin-managed, readable by all signed-in users)
         const { data: settings } = await supabase
-          .from("user_settings")
+          .from("app_settings")
           .select("sheet_csv_url")
-          .eq("user_id", userId)
+          .eq("id", true)
           .maybeSingle();
         const sheetCsv = await fetchSheetContext(settings?.sheet_csv_url ?? null);
 
@@ -74,7 +74,7 @@ Rules:
 - Be concise and insight-driven.
 
 === DATA (CSV) ===
-${sheetCsv || "(No sheet connected yet. Tell the user to paste a Google Sheet 'publish to web' CSV URL in the sidebar.)"}
+${sheetCsv || "(No sheet connected yet. The admin needs to paste a Google Sheet 'publish to web' CSV URL in the sidebar.)"}
 === END DATA ===`;
 
         // Persist the latest user message
