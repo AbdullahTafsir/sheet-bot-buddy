@@ -78,28 +78,68 @@ export function ChartBlock({ raw }: { raw: string }) {
   const isPie = spec.type === "pie";
   const isLine = spec.type === "line";
 
-  // Coerce: ensure label is a string, numeric series fields are numbers.
-  // Drop rows that have no usable numeric value across any series.
+  // Coerce + recover from common model mistakes (label put in value field,
+  // value put in label field like "4.73★", numeric strings with units).
+  const parseNum = (raw: unknown): number => {
+    if (typeof raw === "number") return raw;
+    if (typeof raw === "string") {
+      const n = Number(raw.replace(/[^0-9.\-]/g, ""));
+      return Number.isFinite(n) ? n : NaN;
+    }
+    return NaN;
+  };
+  const looksNumeric = (s: string) => /^\s*-?\d+(\.\d+)?\s*[★%$€]?\s*$/.test(s);
+
   const data = spec.data
     .map((row) => {
-      const out: Record<string, string | number> = {
-        ...row,
-        [xKey]: row[xKey] == null ? "" : String(row[xKey]),
-      };
+      const out: Record<string, string | number> = { ...row };
+      let label = row[xKey] == null ? "" : String(row[xKey]).trim();
+      const primary = series[0];
+      let primaryNum = parseNum(row[primary]);
+
+      // If label looks like a number (e.g. "4.73★") and value is missing,
+      // try to recover: use the number as value, find a real label elsewhere.
+      if ((!Number.isFinite(primaryNum) || primaryNum === 0) && label && looksNumeric(label)) {
+        const parsedFromLabel = parseNum(label);
+        const altLabel = Object.entries(row)
+          .filter(([k, v]) => k !== xKey && typeof v === "string" && !looksNumeric(String(v)))
+          .map(([, v]) => String(v).trim())[0];
+        if (altLabel) {
+          label = altLabel;
+          primaryNum = parsedFromLabel;
+        }
+      }
+
+      out[xKey] = label;
       for (const s of series) {
-        const raw = row[s];
-        const num =
-          typeof raw === "number"
-            ? raw
-            : typeof raw === "string"
-            ? Number(raw.replace(/[^0-9.\-]/g, ""))
-            : NaN;
-        out[s] = Number.isFinite(num) ? num : 0;
+        const n = s === primary ? primaryNum : parseNum(row[s]);
+        out[s] = Number.isFinite(n) ? n : 0;
       }
       return out;
     })
-    .filter((row) => series.some((s) => typeof row[s] === "number" && (row[s] as number) !== 0)
-      || String(row[xKey]).trim() !== "");
+    .filter((row) => {
+      const label = String(row[xKey]).trim();
+      const hasLabel = label !== "" && !looksNumeric(label);
+      const hasValue = series.some((s) => typeof row[s] === "number" && (row[s] as number) !== 0);
+      return hasLabel && hasValue;
+    });
+
+  // Compute value-axis domain so tightly-clustered values (e.g. ratings 4.2–4.8)
+  // render as distinguishable bars instead of all looking ~the same from 0.
+  const allValues = data.flatMap((r) => series.map((s) => Number(r[s])).filter(Number.isFinite));
+  let valueDomain: [number | "auto", number | "auto"] = ["auto", "auto"];
+  if (allValues.length > 0) {
+    const min = Math.min(...allValues);
+    const max = Math.max(...allValues);
+    const range = max - min;
+    const tight = max > 0 && range / max < 0.25 && min > 0;
+    if (unit === "★" || tight) {
+      const pad = Math.max(range * 0.3, 0.1);
+      const lo = Math.max(0, Math.floor((min - pad) * 10) / 10);
+      const hi = unit === "★" ? 5 : Math.ceil((max + pad) * 10) / 10;
+      valueDomain = [lo, hi];
+    }
+  }
 
   // Dynamic height: more rows → taller (esp. horizontal bars)
   const rowCount = data.length;
@@ -176,6 +216,7 @@ export function ChartBlock({ raw }: { raw: string }) {
                 tickLine={false}
                 tickFormatter={(v) => formatNum(v, unit)}
                 width={48}
+                domain={valueDomain}
               />
               <Tooltip contentStyle={TOOLTIP_STYLE} formatter={valueFormatter} />
               {series.length > 1 && (
@@ -221,6 +262,8 @@ export function ChartBlock({ raw }: { raw: string }) {
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={(v) => formatNum(v, unit)}
+                    domain={valueDomain}
+                    allowDataOverflow={false}
                   />
                   <YAxis
                     type="category"
@@ -249,6 +292,7 @@ export function ChartBlock({ raw }: { raw: string }) {
                     tickLine={false}
                     tickFormatter={(v) => formatNum(v, unit)}
                     width={48}
+                    domain={valueDomain}
                   />
                 </>
               )}
