@@ -78,6 +78,29 @@ export function ChartBlock({ raw }: { raw: string }) {
   const isPie = spec.type === "pie";
   const isLine = spec.type === "line";
 
+  // Coerce: ensure label is a string, numeric series fields are numbers.
+  // Drop rows that have no usable numeric value across any series.
+  const data = spec.data
+    .map((row) => {
+      const out: Record<string, string | number> = {
+        ...row,
+        [xKey]: row[xKey] == null ? "" : String(row[xKey]),
+      };
+      for (const s of series) {
+        const raw = row[s];
+        const num =
+          typeof raw === "number"
+            ? raw
+            : typeof raw === "string"
+            ? Number(raw.replace(/[^0-9.\-]/g, ""))
+            : NaN;
+        out[s] = Number.isFinite(num) ? num : 0;
+      }
+      return out;
+    })
+    .filter((row) => series.some((s) => typeof row[s] === "number" && (row[s] as number) !== 0)
+      || String(row[xKey]).trim() !== "");
+
   // Dynamic height: more rows → taller (esp. horizontal bars)
   const rowCount = spec.data.length;
   const height = isHorizontal
