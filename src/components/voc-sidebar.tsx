@@ -105,7 +105,7 @@ export function Sidebar() {
               {saved ? <><Check className="size-3.5" /> Saved</> : save.isPending ? "Saving…" : "Connect Sheet"}
             </Button>
             <p className="text-[10px] text-sidebar-foreground/55 leading-relaxed">
-              Shared with all users. In Sheets: File → Share → Publish to web → CSV.
+              Paste the full Google Sheet link. All tabs are read automatically and shared with every user.
             </p>
           </div>
         </div>
