@@ -24,14 +24,25 @@ type ChartSpec = {
 };
 
 const COLORS = [
-  "hsl(var(--primary))",
-  "hsl(217 91% 60%)",
-  "hsl(142 71% 45%)",
-  "hsl(38 92% 50%)",
-  "hsl(280 87% 65%)",
-  "hsl(346 87% 60%)",
-  "hsl(173 80% 40%)",
+  "#6366f1", // indigo
+  "#10b981", // emerald
+  "#f59e0b", // amber
+  "#ef4444", // red
+  "#3b82f6", // blue
+  "#a855f7", // purple
+  "#14b8a6", // teal
+  "#ec4899", // pink
 ];
+const AXIS_COLOR = "hsl(220 9% 46%)";
+const GRID_COLOR = "hsl(220 13% 91%)";
+const TOOLTIP_STYLE = {
+  background: "white",
+  border: "1px solid hsl(220 13% 91%)",
+  borderRadius: 8,
+  fontSize: 12,
+  color: "hsl(222 47% 11%)",
+  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+};
 
 export function ChartBlock({ raw }: { raw: string }) {
   let spec: ChartSpec | null = null;
@@ -62,12 +73,7 @@ export function ChartBlock({ raw }: { raw: string }) {
           {spec.type === "pie" ? (
             <PieChart>
               <Tooltip
-                contentStyle={{
-                  background: "hsl(var(--popover))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: 8,
-                  fontSize: 12,
-                }}
+                contentStyle={TOOLTIP_STYLE}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               <Pie
@@ -85,16 +91,11 @@ export function ChartBlock({ raw }: { raw: string }) {
             </PieChart>
           ) : spec.type === "line" ? (
             <LineChart data={spec.data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis dataKey={xKey} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-              <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+              <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} />
+              <XAxis dataKey={xKey} tick={{ fontSize: 11 }} stroke={AXIS_COLOR} />
+              <YAxis tick={{ fontSize: 11 }} stroke={AXIS_COLOR} />
               <Tooltip
-                contentStyle={{
-                  background: "hsl(var(--popover))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: 8,
-                  fontSize: 12,
-                }}
+                contentStyle={TOOLTIP_STYLE}
               />
               {series.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
               {series.map((s, i) => (
@@ -114,26 +115,21 @@ export function ChartBlock({ raw }: { raw: string }) {
               layout={spec.type === "horizontal-bar" ? "vertical" : "horizontal"}
               margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} />
               {spec.type === "horizontal-bar" ? (
                 <>
-                  <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis type="category" dataKey={xKey} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" width={100} />
+                  <XAxis type="number" tick={{ fontSize: 11 }} stroke={AXIS_COLOR} />
+                  <YAxis type="category" dataKey={xKey} tick={{ fontSize: 11 }} stroke={AXIS_COLOR} width={100} />
                 </>
               ) : (
                 <>
-                  <XAxis dataKey={xKey} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                  <XAxis dataKey={xKey} tick={{ fontSize: 11 }} stroke={AXIS_COLOR} />
+                  <YAxis tick={{ fontSize: 11 }} stroke={AXIS_COLOR} />
                 </>
               )}
               <Tooltip
-                cursor={{ fill: "hsl(var(--muted) / 0.4)" }}
-                contentStyle={{
-                  background: "hsl(var(--popover))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: 8,
-                  fontSize: 12,
-                }}
+                cursor={{ fill: "rgba(0,0,0,0.04)" }}
+                contentStyle={TOOLTIP_STYLE}
               />
               {series.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
               {series.map((s, i) => (
