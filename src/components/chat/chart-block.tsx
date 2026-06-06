@@ -68,7 +68,7 @@ export function ChartBlock({ raw }: { raw: string }) {
       </pre>
     );
   }
-  if (!spec || !Array.isArray(spec.data) || spec.data.length === 0) return null;
+  if (!spec || !Array.isArray(data) || data.length === 0) return null;
 
   const xKey = spec.xKey ?? "name";
   const yKey = spec.yKey ?? "value";
@@ -78,8 +78,31 @@ export function ChartBlock({ raw }: { raw: string }) {
   const isPie = spec.type === "pie";
   const isLine = spec.type === "line";
 
+  // Coerce: ensure label is a string, numeric series fields are numbers.
+  // Drop rows that have no usable numeric value across any series.
+  const data = data
+    .map((row) => {
+      const out: Record<string, string | number> = {
+        ...row,
+        [xKey]: row[xKey] == null ? "" : String(row[xKey]),
+      };
+      for (const s of series) {
+        const raw = row[s];
+        const num =
+          typeof raw === "number"
+            ? raw
+            : typeof raw === "string"
+            ? Number(raw.replace(/[^0-9.\-]/g, ""))
+            : NaN;
+        out[s] = Number.isFinite(num) ? num : 0;
+      }
+      return out;
+    })
+    .filter((row) => series.some((s) => typeof row[s] === "number" && (row[s] as number) !== 0)
+      || String(row[xKey]).trim() !== "");
+
   // Dynamic height: more rows → taller (esp. horizontal bars)
-  const rowCount = spec.data.length;
+  const rowCount = data.length;
   const height = isHorizontal
     ? Math.max(180, rowCount * 44 + 60)
     : isPie
@@ -88,7 +111,7 @@ export function ChartBlock({ raw }: { raw: string }) {
 
   // Compute left margin for horizontal labels
   const longestLabel = isHorizontal
-    ? Math.max(...spec.data.map((d) => String(d[xKey] ?? "").length))
+    ? Math.max(...data.map((d) => String(d[xKey] ?? "").length))
     : 0;
   const leftMargin = isHorizontal ? Math.min(160, Math.max(80, longestLabel * 7)) : 8;
 
@@ -122,7 +145,7 @@ export function ChartBlock({ raw }: { raw: string }) {
                 wrapperStyle={{ fontSize: 12, color: "#475569", paddingTop: 8 }}
               />
               <Pie
-                data={spec.data}
+                data={data}
                 dataKey={yKey}
                 nameKey={xKey}
                 outerRadius={90}
@@ -133,13 +156,13 @@ export function ChartBlock({ raw }: { raw: string }) {
                 label={(e: { value: number }) => valueFormatter(e.value)}
                 labelLine={false}
               >
-                {spec.data.map((_, i) => (
+                {data.map((_, i) => (
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
                 ))}
               </Pie>
             </PieChart>
           ) : isLine ? (
-            <LineChart data={spec.data} margin={{ top: 16, right: 24, left: 8, bottom: 8 }}>
+            <LineChart data={data} margin={{ top: 16, right: 24, left: 8, bottom: 8 }}>
               <CartesianGrid stroke={GRID} vertical={false} />
               <XAxis
                 dataKey={xKey}
@@ -175,7 +198,7 @@ export function ChartBlock({ raw }: { raw: string }) {
             </LineChart>
           ) : (
             <BarChart
-              data={spec.data}
+              data={data}
               layout={isHorizontal ? "vertical" : "horizontal"}
               margin={{
                 top: 16,
@@ -216,9 +239,9 @@ export function ChartBlock({ raw }: { raw: string }) {
                     axisLine={AXIS_LINE}
                     tickLine={false}
                     interval={0}
-                    angle={spec.data.length > 5 ? -20 : 0}
-                    textAnchor={spec.data.length > 5 ? "end" : "middle"}
-                    height={spec.data.length > 5 ? 56 : 30}
+                    angle={data.length > 5 ? -20 : 0}
+                    textAnchor={data.length > 5 ? "end" : "middle"}
+                    height={data.length > 5 ? 56 : 30}
                   />
                   <YAxis
                     tick={AXIS_TICK}
@@ -249,7 +272,7 @@ export function ChartBlock({ raw }: { raw: string }) {
                   maxBarSize={isHorizontal ? 28 : 56}
                 >
                   {series.length === 1 &&
-                    spec!.data.map((_, idx) => (
+                    data.map((_, idx) => (
                       <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
                     ))}
                   {series.length === 1 && (
