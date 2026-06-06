@@ -73,12 +73,7 @@ export function ChartBlock({ raw }: { raw: string }) {
           {spec.type === "pie" ? (
             <PieChart>
               <Tooltip
-                contentStyle={{
-                  background: "hsl(var(--popover))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: 8,
-                  fontSize: 12,
-                }}
+                contentStyle={TOOLTIP_STYLE}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               <Pie
@@ -96,16 +91,11 @@ export function ChartBlock({ raw }: { raw: string }) {
             </PieChart>
           ) : spec.type === "line" ? (
             <LineChart data={spec.data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis dataKey={xKey} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-              <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+              <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} />
+              <XAxis dataKey={xKey} tick={{ fontSize: 11 }} stroke={AXIS_COLOR} />
+              <YAxis tick={{ fontSize: 11 }} stroke={AXIS_COLOR} />
               <Tooltip
-                contentStyle={{
-                  background: "hsl(var(--popover))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: 8,
-                  fontSize: 12,
-                }}
+                contentStyle={TOOLTIP_STYLE}
               />
               {series.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
               {series.map((s, i) => (
@@ -125,26 +115,21 @@ export function ChartBlock({ raw }: { raw: string }) {
               layout={spec.type === "horizontal-bar" ? "vertical" : "horizontal"}
               margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} />
               {spec.type === "horizontal-bar" ? (
                 <>
-                  <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis type="category" dataKey={xKey} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" width={100} />
+                  <XAxis type="number" tick={{ fontSize: 11 }} stroke={AXIS_COLOR} />
+                  <YAxis type="category" dataKey={xKey} tick={{ fontSize: 11 }} stroke={AXIS_COLOR} width={100} />
                 </>
               ) : (
                 <>
-                  <XAxis dataKey={xKey} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                  <XAxis dataKey={xKey} tick={{ fontSize: 11 }} stroke={AXIS_COLOR} />
+                  <YAxis tick={{ fontSize: 11 }} stroke={AXIS_COLOR} />
                 </>
               )}
               <Tooltip
-                cursor={{ fill: "hsl(var(--muted) / 0.4)" }}
-                contentStyle={{
-                  background: "hsl(var(--popover))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: 8,
-                  fontSize: 12,
-                }}
+                cursor={{ fill: "rgba(0,0,0,0.04)" }}
+                contentStyle={TOOLTIP_STYLE}
               />
               {series.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
               {series.map((s, i) => (
