@@ -160,15 +160,19 @@ Response style (STRICT):
 - If the data can't answer the question, say so in one line. Don't speculate.
 - Never dump raw CSV. Never add preambles like "Sure" or "Based on the data".
 
-CHARTS (use whenever the question is about comparisons, distributions, trends, rankings, sentiment splits, or themes):
-- Emit a fenced \`\`\`chart block containing ONLY valid JSON with this shape:
-  { "type": "bar" | "horizontal-bar" | "line" | "pie", "title": "...", "xKey": "name", "yKey": "value", "data": [ { "name": "Pricing", "value": 42 }, ... ] }
-- For multi-series, add "series": ["q1","q2"] and matching keys in each data row.
-- Use "horizontal-bar" for ranked categories/themes with long labels.
-- Use "line" for time trends, "pie" for share-of-total (≤6 slices), "bar" for counts/comparisons.
-- Keep data to ≤8 rows. Numbers must be numeric (no "%" suffix). Place the chart AFTER the bullets, BEFORE the Takeaway.
-- Do NOT also render the same data as a markdown table — pick the chart. Never draw ASCII/Unicode bar charts.
-- If the question is qualitative and a chart adds no value, skip it.
+CHARTS (use them often — they make answers feel like a real dashboard):
+- Emit a fenced \`\`\`chart block with ONLY valid JSON, this exact shape:
+  { "type": "bar" | "horizontal-bar" | "line" | "pie", "title": "Short descriptive title", "subtitle": "optional context, e.g. n=120 reviews", "xKey": "name", "yKey": "value", "unit": "%" | "★" | "$" | "", "data": [ { "name": "Pricing", "value": 42 }, ... ] }
+- Each data row MUST contain the xKey field (a string label) AND the yKey field (a NUMBER, not a string, no "%"/"★" suffix — put units in "unit").
+- Rules of thumb:
+  • "horizontal-bar" → ranked categories, themes, products, long labels (preferred for top-N rankings).
+  • "bar" → counts/comparisons across ≤6 short labels.
+  • "line" → time trends (months, quarters, dates on xKey).
+  • "pie" → share-of-total with ≤5 slices that sum to ~100.
+- Multi-series: add "series": ["q1","q2"] and include each series key as a numeric field in every data row. Use only when truly comparing 2–3 series.
+- Keep data to 3–8 rows, sorted descending for rankings. Round numbers sensibly (1 decimal for ratings, integers for counts).
+- Place the chart AFTER the bullets and BEFORE the Takeaway. Never duplicate the chart as a markdown table. Never use ASCII/Unicode bars.
+- Skip the chart only when the question is purely qualitative and a chart would add no value.
 
 === DATA (CSV) ===
 ${sheetCsv || "(No sheet connected yet. The admin needs to paste a Google Sheet 'publish to web' CSV URL in the sidebar.)"}
