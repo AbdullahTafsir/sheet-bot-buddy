@@ -90,7 +90,7 @@ export function Sidebar() {
             <div className="relative">
               <Link2 className="absolute left-2.5 top-2.5 size-3.5 text-sidebar-foreground/50" />
               <Input
-                placeholder="Google Sheet CSV URL"
+                placeholder="Google Sheet URL (all tabs)"
                 value={sheetUrl}
                 onChange={(e) => setSheetUrl(e.target.value)}
                 className="pl-8 h-9 bg-background border-sidebar-border text-sidebar-foreground text-xs placeholder:text-sidebar-foreground/40 focus-visible:ring-primary"
