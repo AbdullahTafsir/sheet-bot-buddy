@@ -262,6 +262,8 @@ export function ChartBlock({ raw }: { raw: string }) {
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={(v) => formatNum(v, unit)}
+                    domain={valueDomain}
+                    allowDataOverflow={false}
                   />
                   <YAxis
                     type="category"
