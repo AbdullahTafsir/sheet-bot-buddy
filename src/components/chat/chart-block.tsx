@@ -216,6 +216,7 @@ export function ChartBlock({ raw }: { raw: string }) {
                 tickLine={false}
                 tickFormatter={(v) => formatNum(v, unit)}
                 width={48}
+                domain={valueDomain}
               />
               <Tooltip contentStyle={TOOLTIP_STYLE} formatter={valueFormatter} />
               {series.length > 1 && (
