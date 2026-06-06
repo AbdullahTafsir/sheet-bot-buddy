@@ -68,7 +68,7 @@ export function ChartBlock({ raw }: { raw: string }) {
       </pre>
     );
   }
-  if (!spec || !Array.isArray(data) || data.length === 0) return null;
+  if (!spec || !Array.isArray(spec.data) || spec.data.length === 0) return null;
 
   const xKey = spec.xKey ?? "name";
   const yKey = spec.yKey ?? "value";
@@ -80,7 +80,7 @@ export function ChartBlock({ raw }: { raw: string }) {
 
   // Coerce: ensure label is a string, numeric series fields are numbers.
   // Drop rows that have no usable numeric value across any series.
-  const data = data
+  const data = spec.data
     .map((row) => {
       const out: Record<string, string | number> = {
         ...row,
