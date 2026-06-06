@@ -292,6 +292,7 @@ export function ChartBlock({ raw }: { raw: string }) {
                     tickLine={false}
                     tickFormatter={(v) => formatNum(v, unit)}
                     width={48}
+                    domain={valueDomain}
                   />
                 </>
               )}
