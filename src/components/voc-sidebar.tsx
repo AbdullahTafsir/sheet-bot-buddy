@@ -90,7 +90,7 @@ export function Sidebar() {
             <div className="relative">
               <Link2 className="absolute left-2.5 top-2.5 size-3.5 text-sidebar-foreground/50" />
               <Input
-                placeholder="Google Sheet CSV URL"
+                placeholder="Google Sheet URL (all tabs)"
                 value={sheetUrl}
                 onChange={(e) => setSheetUrl(e.target.value)}
                 className="pl-8 h-9 bg-background border-sidebar-border text-sidebar-foreground text-xs placeholder:text-sidebar-foreground/40 focus-visible:ring-primary"
@@ -105,7 +105,7 @@ export function Sidebar() {
               {saved ? <><Check className="size-3.5" /> Saved</> : save.isPending ? "Saving…" : "Connect Sheet"}
             </Button>
             <p className="text-[10px] text-sidebar-foreground/55 leading-relaxed">
-              Shared with all users. In Sheets: File → Share → Publish to web → CSV.
+              Paste the full Google Sheet link. All tabs are read automatically and shared with every user.
             </p>
           </div>
         </div>

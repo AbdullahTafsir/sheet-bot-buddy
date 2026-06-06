@@ -82,7 +82,7 @@ export const getSettings = createServerFn({ method: "GET" })
 export const updateSheetUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
-    z.object({ url: z.string().url().or(z.literal("")) }).parse(i),
+    z.object({ url: z.string().trim().max(2000) }).parse(i),
   )
   .handler(async ({ context, data }) => {
     const { error } = await context.supabase
