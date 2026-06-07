@@ -1,4 +1,4 @@
-import logo from "@/assets/voc-logo.png";
+import logo from "@/assets/vog-logo.png";
 
 const SUGGESTIONS = [
   "Summarize the top customer complaints",

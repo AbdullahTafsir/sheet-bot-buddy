@@ -62,12 +62,12 @@ function AuthPage() {
         />
         <div className="relative flex items-center gap-2 text-lg font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
           <BarChart3 className="size-5" />
-          VOC Intelligence
+          VOG Intelligence
         </div>
 
         <div className="relative space-y-6">
           <h2 className="text-4xl font-semibold leading-tight" style={{ fontFamily: "'Georgia', serif" }}>
-            Talk to your Voice‑of‑Customer data.
+            Talk to your Voice‑of‑Guest data.
           </h2>
           <p className="text-primary-foreground/80 text-base max-w-md">
             Ask questions in plain English. Get sharp insights, comparisons, and verbatim quotes — instantly.
@@ -79,7 +79,7 @@ function AuthPage() {
           </ul>
         </div>
 
-        <p className="relative text-xs text-primary-foreground/70">© {new Date().getFullYear()} VOC Intelligence</p>
+        <p className="relative text-xs text-primary-foreground/70">© {new Date().getFullYear()} VOG Intelligence</p>
       </div>
 
       {/* Right form panel */}
