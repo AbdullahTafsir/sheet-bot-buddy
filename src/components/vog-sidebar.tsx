@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Plus, Trash2, LogOut, MessageSquare, Link2, Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import logo from "@/assets/voc-logo.png";
+import logo from "@/assets/vog-logo.png";
 
 export function Sidebar() {
   const nav = useNavigate();
@@ -76,7 +76,7 @@ export function Sidebar() {
       <div className="px-5 pt-5 pb-4 flex items-center gap-3">
         <img src={logo} alt="" width={32} height={32} className="rounded" />
         <div>
-          <div className="text-sm font-semibold text-sidebar-foreground" style={{ fontFamily: "'Georgia', serif" }}>VOC Bot</div>
+          <div className="text-sm font-semibold text-sidebar-foreground" style={{ fontFamily: "'Georgia', serif" }}>VOG Bot</div>
           <div className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">Intelligence</div>
         </div>
       </div>
