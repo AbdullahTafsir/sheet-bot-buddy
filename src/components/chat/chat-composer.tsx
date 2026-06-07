@@ -25,7 +25,7 @@ export const ChatComposer = forwardRef<HTMLTextAreaElement, Props>(
               ref={ref}
               value={value}
               onChange={(e) => onChange(e.target.value)}
-              placeholder="Ask about your VOC data…"
+              placeholder="Ask about your VOG data…"
             />
             <PromptInputFooter className="justify-end">
               <PromptInputSubmit status={status} disabled={!value.trim() || isBusy} />

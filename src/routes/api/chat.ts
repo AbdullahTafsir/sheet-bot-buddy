@@ -87,7 +87,7 @@ async function fetchAllTabsViaConnector(spreadsheetId: string): Promise<string> 
 
 async function fetchCsvUrl(url: string): Promise<string> {
   try {
-    const res = await fetch(url, { headers: { "user-agent": "voc-bot" } });
+    const res = await fetch(url, { headers: { "user-agent": "vog-bot" } });
     if (!res.ok) return `(Failed to load sheet: HTTP ${res.status})`;
     const text = await res.text();
     return text.length > MAX_SHEET_CHARS
@@ -149,7 +149,7 @@ export const Route = createFileRoute("/api/chat")({
           .maybeSingle();
         const sheetCsv = await fetchSheetContext(settings?.sheet_csv_url ?? null);
 
-        const systemPrompt = `You are VOC Intelligence Bot — a sharp analyst answering questions about the Voice-of-Customer CSV below.
+        const systemPrompt = `You are VOG Intelligence Bot — a sharp analyst answering questions about the Voice-of-Guest CSV below.
 
 Response style (STRICT):
 - Be SHORT and punchy. Target 60–120 words unless the user explicitly asks for depth.
