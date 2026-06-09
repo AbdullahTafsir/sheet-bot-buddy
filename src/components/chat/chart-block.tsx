@@ -158,6 +158,21 @@ export function ChartBlock({ raw }: { raw: string }) {
 
   const valueFormatter = (v: unknown) => formatNum(v, unit);
 
+  const horizontalMetric = series[0];
+  const horizontalValues = isHorizontal
+    ? data.map((row) => Number(row[horizontalMetric])).filter(Number.isFinite)
+    : [];
+  const horizontalMin = horizontalValues.length ? Math.min(...horizontalValues) : 0;
+  const horizontalMax = horizontalValues.length ? Math.max(...horizontalValues) : 0;
+  const horizontalStart = unit === "★" ? Math.max(0, Math.floor((horizontalMin - 0.3) * 10) / 10) : 0;
+  const horizontalEnd = unit === "★" ? 5 : Math.max(1, Math.ceil(horizontalMax * 1.15 * 10) / 10);
+  const horizontalRange = Math.max(0.0001, horizontalEnd - horizontalStart);
+  const horizontalTicks = Array.from({ length: 5 }, (_, i) => horizontalStart + (horizontalRange * i) / 4);
+  const horizontalWidth = (value: number) => {
+    const pct = ((value - horizontalStart) / horizontalRange) * 100;
+    return `${Math.min(100, Math.max(value > 0 ? 3 : 0, pct))}%`;
+  };
+
   return (
     <figure className="my-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       {(spec.title || spec.subtitle) && (
@@ -172,8 +187,69 @@ export function ChartBlock({ raw }: { raw: string }) {
           )}
         </div>
       )}
-      <div className="px-3 py-4" style={{ height }}>
-        <ResponsiveContainer width="100%" height="100%">
+      {isHorizontal ? (
+        <div className="px-5 py-4">
+          <div className="space-y-3">
+            {data.map((row, idx) => {
+              const label = String(row[xKey] ?? `Item ${idx + 1}`);
+              const value = Number(row[horizontalMetric]);
+              return (
+                <div
+                  key={`${label}-${idx}`}
+                  className="grid items-center gap-3"
+                  style={{ gridTemplateColumns: "minmax(120px, 34%) minmax(0, 1fr) 56px" }}
+                >
+                  <div
+                    className="min-w-0 text-xs font-medium leading-snug text-slate-700"
+                    title={label}
+                    style={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {label}
+                  </div>
+                  <div className="relative h-7 min-w-0 overflow-hidden rounded-sm">
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        backgroundImage: `linear-gradient(to right, ${GRID} 1px, transparent 1px)`,
+                        backgroundSize: "25% 100%",
+                      }}
+                    />
+                    <div
+                      className="absolute left-0 top-1/2 h-5 -translate-y-1/2 rounded-r"
+                      style={{
+                        width: horizontalWidth(Number.isFinite(value) ? value : 0),
+                        backgroundColor: COLORS[idx % COLORS.length],
+                      }}
+                    />
+                  </div>
+                  <div className="text-right text-xs font-semibold text-slate-700">
+                    {valueFormatter(Number.isFinite(value) ? value : 0)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div
+            className="mt-2 grid gap-3"
+            style={{ gridTemplateColumns: "minmax(120px, 34%) minmax(0, 1fr) 56px" }}
+          >
+            <div />
+            <div className="flex justify-between text-[10px] font-medium text-slate-400">
+              {horizontalTicks.map((tick, idx) => (
+                <span key={idx}>{formatNum(tick, unit)}</span>
+              ))}
+            </div>
+            <div />
+          </div>
+        </div>
+      ) : (
+        <div className="px-3 py-4" style={{ height }}>
+          <ResponsiveContainer width="100%" height="100%">
           {isPie ? (
             <PieChart>
               <Tooltip
@@ -332,8 +408,9 @@ export function ChartBlock({ raw }: { raw: string }) {
               ))}
             </BarChart>
           )}
-        </ResponsiveContainer>
-      </div>
+          </ResponsiveContainer>
+        </div>
+      )}
     </figure>
   );
 }
