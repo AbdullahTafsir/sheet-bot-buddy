@@ -134,15 +134,12 @@ export function ChartBlock({ raw }: { raw: string }) {
   let valueDomain: [number | "auto", number | "auto"] = ["auto", "auto"];
   if (allValues.length > 0) {
     const min = Math.min(...allValues);
-    const max = Math.max(...allValues);
-    const range = max - min;
-    const tight = max > 0 && range / max < 0.25 && min > 0;
-    if (unit === "★" || tight) {
-      const pad = Math.max(range * 0.3, 0.1);
-      const lo = Math.max(0, Math.floor((min - pad) * 10) / 10);
-      const hi = unit === "★" ? 5 : Math.ceil((max + pad) * 10) / 10;
-      valueDomain = [lo, hi];
+    if (unit === "★") {
+      // Ratings: zoom so 4.2 vs 4.8 are distinguishable; always cap at 5.
+      const lo = Math.max(0, Math.floor((min - 0.3) * 10) / 10);
+      valueDomain = [lo, 5];
     }
+    // For %, $, counts etc. keep auto domain anchored at 0 so widths stay proportional.
   }
 
   // Dynamic height: more rows → taller (esp. horizontal bars)
