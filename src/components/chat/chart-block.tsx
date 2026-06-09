@@ -91,24 +91,30 @@ export function ChartBlock({ raw }: { raw: string }) {
   const looksNumeric = (s: string) => /^\s*-?\d+(\.\d+)?\s*[★%$€]?\s*$/.test(s);
 
   const data = spec.data
-    .map((row) => {
+    .map((row, idx) => {
       const out: Record<string, string | number> = { ...row };
       let label = row[xKey] == null ? "" : String(row[xKey]).trim();
       const primary = series[0];
       let primaryNum = parseNum(row[primary]);
 
-      // If label looks like a number (e.g. "4.73★") and value is missing,
-      // try to recover: use the number as value, find a real label elsewhere.
-      if ((!Number.isFinite(primaryNum) || primaryNum === 0) && label && looksNumeric(label)) {
-        const parsedFromLabel = parseNum(label);
+      // Recover when the model swapped label/value or left the label blank.
+      // Look across all other fields for a real text label (non-numeric string).
+      const needsRecovery =
+        !label ||
+        looksNumeric(label) ||
+        !Number.isFinite(primaryNum);
+      if (needsRecovery) {
         const altLabel = Object.entries(row)
-          .filter(([k, v]) => k !== xKey && typeof v === "string" && !looksNumeric(String(v)))
+          .filter(([k, v]) => k !== xKey && typeof v === "string" && String(v).trim() !== "" && !looksNumeric(String(v)))
           .map(([, v]) => String(v).trim())[0];
-        if (altLabel) {
+        if (looksNumeric(label) && (!Number.isFinite(primaryNum) || primaryNum === 0)) {
+          primaryNum = parseNum(label);
+        }
+        if (altLabel && (!label || looksNumeric(label))) {
           label = altLabel;
-          primaryNum = parsedFromLabel;
         }
       }
+      if (!label) label = `Item ${idx + 1}`;
 
       out[xKey] = label;
       for (const s of series) {
@@ -118,10 +124,8 @@ export function ChartBlock({ raw }: { raw: string }) {
       return out;
     })
     .filter((row) => {
-      const label = String(row[xKey]).trim();
-      const hasLabel = label !== "" && !looksNumeric(label);
       const hasValue = series.some((s) => typeof row[s] === "number" && (row[s] as number) !== 0);
-      return hasLabel && hasValue;
+      return hasValue;
     });
 
   // Compute value-axis domain so tightly-clustered values (e.g. ratings 4.2–4.8)
@@ -130,15 +134,12 @@ export function ChartBlock({ raw }: { raw: string }) {
   let valueDomain: [number | "auto", number | "auto"] = ["auto", "auto"];
   if (allValues.length > 0) {
     const min = Math.min(...allValues);
-    const max = Math.max(...allValues);
-    const range = max - min;
-    const tight = max > 0 && range / max < 0.25 && min > 0;
-    if (unit === "★" || tight) {
-      const pad = Math.max(range * 0.3, 0.1);
-      const lo = Math.max(0, Math.floor((min - pad) * 10) / 10);
-      const hi = unit === "★" ? 5 : Math.ceil((max + pad) * 10) / 10;
-      valueDomain = [lo, hi];
+    if (unit === "★") {
+      // Ratings: zoom so 4.2 vs 4.8 are distinguishable; always cap at 5.
+      const lo = Math.max(0, Math.floor((min - 0.3) * 10) / 10);
+      valueDomain = [lo, 5];
     }
+    // For %, $, counts etc. keep auto domain anchored at 0 so widths stay proportional.
   }
 
   // Dynamic height: more rows → taller (esp. horizontal bars)
